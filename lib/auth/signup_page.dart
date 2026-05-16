@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:genzee_wears/constants/app_routes.dart';
 import 'package:genzee_wears/constants/app_text_styles.dart';
-import 'package:genzee_wears/login_page.dart';
+import 'package:genzee_wears/auth/login_page.dart';
+import 'package:genzee_wears/services/auth_service.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -17,8 +18,6 @@ class _SignupPageState extends State<SignupPage> {
   final confirmPasswordController = TextEditingController();
   bool isObscure = true;
   final formKey = GlobalKey<FormState>();
-  // bool isPasswordObscure = true;
-  // bool isConfirmPasswordObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +28,7 @@ class _SignupPageState extends State<SignupPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xff7C53FB),
+              Color(0xff603eca),
               Color(0xff3c1d99),
             ],
           ),
@@ -72,7 +71,7 @@ class _SignupPageState extends State<SignupPage> {
                           const Text(
                             "Full Name",
                             style: TextStyle(
-                              color: Color(0xff9b4dff),
+                              color: Color(0xff3c1d99),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -86,21 +85,21 @@ class _SignupPageState extends State<SignupPage> {
                               return null;
                             },
                             decoration: InputDecoration(
-                              hintText: "John Doe",
+                              hintText: "Salonee Shrestha",
                               enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black26),
                               ),
                               focusedBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Color(0xff9b4dff)),
+                                    color: Color(0xff3c1d99)),
                               ),
                             ),
                           ),
                           SizedBox(height: 25),
                           const Text(
-                            "Gmail",
+                            "Email",
                             style: TextStyle(
-                              color: Color(0xff9b4dff),
+                              color: Color(0xff3c1d99),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -122,7 +121,7 @@ class _SignupPageState extends State<SignupPage> {
                               ),
                               focusedBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Color(0xff9b4dff)),
+                                    color: Color(0xff3c1d99)),
                               ),
                             ),
                           ),
@@ -130,7 +129,7 @@ class _SignupPageState extends State<SignupPage> {
                           const Text(
                             "Password",
                             style: TextStyle(
-                              color: Color(0xff9b4dff),
+                              color: Color(0xff3c1d99),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -165,7 +164,7 @@ class _SignupPageState extends State<SignupPage> {
                               ),
                               focusedBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Color(0xff9b4dff)),
+                                    color: Color(0xff3c1d99)),
                               ),
                             ),
                           ),
@@ -173,7 +172,7 @@ class _SignupPageState extends State<SignupPage> {
                           const Text(
                             "Confirm Password",
                             style: TextStyle(
-                              color: Color(0xff9b4dff),
+                              color: Color(0xff3c1d99),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -208,7 +207,7 @@ class _SignupPageState extends State<SignupPage> {
                               ),
                               focusedBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Color(0xff9b4dff)),
+                                    color: Color(0xff3c1d99)),
                               ),
                             ),
                           ),
@@ -216,26 +215,43 @@ class _SignupPageState extends State<SignupPage> {
 
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
+                              backgroundColor: Color(0xff191c19),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               minimumSize: Size(double.infinity,56),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               if (formKey.currentState?.validate() ?? false) {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginPage(),
-                                  ),
-                                      (route) => false,
+                                final message = await AuthService.instance.signup(
+                                  nameController.text.trim(),
+                                  emailController.text.trim(),
+                                  passwordController.text,
                                 );
+                                if (message == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Account created successfully!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => LoginPage()),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(message),
+                                      backgroundColor: Colors.redAccent,
+                                    ),
+                                  );
+                                }
                               }
                             },
                             child: Text('sign up'.toUpperCase(),
                               style: AppTextStyle.poppinsMedium.copyWith(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Colors.white,
                               ),
                             ),
@@ -246,7 +262,7 @@ class _SignupPageState extends State<SignupPage> {
                             children: [
                               Text('Already have an account?',
                                   style: AppTextStyle.poppinsMedium.copyWith(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     color: Colors.black,
                                   )
                               ),
@@ -257,8 +273,8 @@ class _SignupPageState extends State<SignupPage> {
                                 },
                                 child: Text('Sign in',
                                     style: AppTextStyle.poppinsMedium.copyWith(
-                                      fontSize: 18,
-                                      color: Color(0xff7C53FB),
+                                      fontSize: 16,
+                                      color: Color(0xff3c1d99),
                                     )
                                 ),
                               ),

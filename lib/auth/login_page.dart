@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:genzee_wears/bottom_navigation.dart';
+import 'package:genzee_wears/pages/bottom_navigation.dart';
 import 'package:genzee_wears/constants/app_routes.dart';
 import 'package:genzee_wears/constants/app_text_styles.dart';
+import 'package:genzee_wears/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xff7C53FB),
+              Color(0xff603eca),
               Color(0xff3c1d99),
             ],
           ),
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                           const Text(
                             "Gmail",
                             style: TextStyle(
-                              color: Color(0xff9b4dff),
+                              color: Color(0xff3c1d99),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -89,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderSide: BorderSide(color: Colors.black26),
                               ),
                               focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff9b4dff)),
+                                borderSide: BorderSide(color: Color(0xff3c1d99)),
                               ),
                             ),
                           ),
@@ -97,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                           const Text(
                             "Password",
                             style: TextStyle(
-                              color: Color(0xff9b4dff),
+                              color: Color(0xff3c1d99),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -129,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderSide: BorderSide(color: Colors.black26),
                               ),
                               focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff9b4dff)),
+                                borderSide: BorderSide(color: Color(0xff3c1d99)),
                               ),
                             ),
                           ),
@@ -139,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text(
                               "Forgot password?",
                               style: TextStyle(
-                                color: Color(0xff9b4dff),
+                                color: Color(0xff3c1d99),
                                 fontSize: 13,
                               ),
                             ),
@@ -147,26 +148,39 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 35),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
+                              backgroundColor: Color(0xff191c19),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               minimumSize: Size(double.infinity,56),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               if (formKey.currentState?.validate() ?? false) {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BottomNavigation(),
-                                  ),
-                                      (route) => false,
+                                final success = await AuthService.instance.login(
+                                  emailController.text.trim(),
+                                  passwordController.text,
                                 );
+                                if (success) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BottomNavigation(),
+                                    ),
+                                        (route) => false,
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Invalid email or password'),
+                                      backgroundColor: Colors.redAccent,
+                                    ),
+                                  );
+                                }
                               }
                             },
                             child: Text('sign in'.toUpperCase(),
                               style: AppTextStyle.poppinsMedium.copyWith(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Colors.white,
                               ),
                             ),
@@ -177,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               Text('Don\'t have an account?',
                                   style: AppTextStyle.poppinsMedium.copyWith(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     color: Colors.black,
                                   )
                               ),
@@ -188,8 +202,8 @@ class _LoginPageState extends State<LoginPage> {
                                 },
                                 child: Text('Signup',
                                     style: AppTextStyle.poppinsMedium.copyWith(
-                                      fontSize: 18,
-                                      color: Color(0xff7C53FB),
+                                      fontSize: 16,
+                                      color: Color(0xff3c1d99),
                                     )
                                 ),
                               ),
